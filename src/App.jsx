@@ -6,9 +6,11 @@ import { generarId } from "./helpers";
 import IconoNuevoGasto from "./img/nuevo-gasto.svg";
 
 function App() {
-  const [gastos, setGastos] = useState([]);
+  const [gastos, setGastos] = useState(
+    localStorage.getItem("gastos") ? JSON.parse(localStorage.getItem("gastos")) : []
+  );
 
-  const [presupuesto, setPresupuesto] = useState(0);
+  const [presupuesto, setPresupuesto] = useState(Number(localStorage.getItem("presupuesto")) ?? 0);
   const [isValidPresupuesto, setIsValidPresupuesto] = useState(false);
 
   const [modal, setModal] = useState(false);
@@ -25,6 +27,22 @@ function App() {
       }, 500);
     }
   }, [gastoEditar]);
+
+  useEffect(() => {
+    localStorage.setItem("presupuesto", presupuesto ?? 0);
+  }, [presupuesto]);
+
+  useEffect(() => {
+    localStorage.setItem("gastos", JSON.stringify(gastos) ?? []);
+  }, [gastos]);
+
+  useEffect(() => {
+    const presupuestoLocalStorage = Number(localStorage.getItem("presupuesto")) ?? 0;
+
+    if (presupuestoLocalStorage > 0) {
+      setIsValidPresupuesto(true);
+    }
+  }, []);
 
   const handleNuevoGasto = () => {
     setModal(true);
